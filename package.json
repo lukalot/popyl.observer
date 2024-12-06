@@ -1,0 +1,42 @@
+{
+  "name": "cellular-automata-3d",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@react-three/drei": "^9.120.0",
+    "@react-three/fiber": "^8.17.10",
+    "@types/three": "^0.170.0",
+    "cra-template-typescript": "1.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "three": "^0.171.0"
+  },
+  "devDependencies": {
+    "@craco/craco": "^7.1.0"
+  },
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
