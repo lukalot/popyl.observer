@@ -161,7 +161,9 @@ export const VoxelGrid = ({ generations, onLayerSelect }: VoxelGridProps) => {
 
   return (
     <>
+      {/* @ts-ignore */}
       <primitive object={instancedMesh} onClick={handleClick} />
+      {/* @ts-ignore */}
       {wireframe && <primitive object={wireframe} />}
     </>
   );

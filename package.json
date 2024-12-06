@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@react-three/drei": "^9.120.0",
     "@react-three/fiber": "^8.17.10",
     "@types/three": "^0.170.0",
@@ -38,6 +40,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "license": "GPL-3.0"
+  }
 }

@@ -14,7 +14,6 @@ function App() {
     birth: parseRuleString("3")
   });
   
-  // Add key state to force CellularAutomata3D remount
   const [key, setKey] = useState(0);
 
   const handleRuleChange = (newRules: { survival: number[], birth: number[] }) => {
@@ -32,17 +31,21 @@ function App() {
       <RuleInput onRuleChange={handleRuleChange} />
       <RestartButton onRestart={handleRestart} />
       <Canvas camera={{ position: [15, 15, 15], fov: 75 }}>
+        {/* @ts-ignore */}
         <color attach="background" args={['#111112']} />
+        {/* @ts-ignore */}
         <ambientLight intensity={0.4} />
+        {/* @ts-ignore */}
         <pointLight 
           position={[10, 130, 20]} 
           intensity={3000}
-          color="#ffdd88"  // Warm yellow light
+          color="#ffdd88"
         />
+        {/* @ts-ignore */}
         <pointLight 
           position={[-50, -100, -50]} 
           intensity={1000}
-          color="#9785f2"  // Slightly cooler yellow for contrast
+          color="#9785f2"
         />
         <CellularAutomata3D 
           key={key}
@@ -51,7 +54,10 @@ function App() {
           frameDelay={200}
           rules={rules}
         />
-        <OrbitControls />
+        <OrbitControls 
+          maxDistance={230} 
+          minDistance={5}
+        />
       </Canvas>
     </div>
   );
