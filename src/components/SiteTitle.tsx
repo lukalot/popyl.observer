@@ -19,7 +19,7 @@ const TitleContainer = styled.div`
   align-items: center;
   gap: 8px;
 
-  @media (max-width: 600px) {
+  @media (max-width: 810px) {
     display: none;
   }
 `;

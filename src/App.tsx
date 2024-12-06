@@ -3,10 +3,11 @@ import { CellularAutomata3D } from './components/CellularAutomata3D.tsx';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { FPSCounter } from './components/FPSCounter.tsx';
-import { RuleInput } from './components/RuleInput.tsx';
 import { RestartButton } from './components/RestartButton.tsx';
 import SiteTitle from './components/SiteTitle.tsx';
 import { parseRuleString } from './utils/cellularAutomata.ts';
+import Sidebar from './components/Sidebar.tsx';
+import { CameraController } from './components/CameraController.tsx';
 
 function App() {
   const [rules, setRules] = useState({
@@ -15,6 +16,7 @@ function App() {
   });
   
   const [key, setKey] = useState(0);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
 
   const handleRuleChange = (newRules: { survival: number[], birth: number[] }) => {
     setRules(newRules);
@@ -28,9 +30,11 @@ function App() {
     <div style={{ width: '100vw', height: '100vh', background: '#111112' }}>
       <SiteTitle />
       <FPSCounter />
-      <RuleInput onRuleChange={handleRuleChange} />
       <RestartButton onRestart={handleRestart} />
-      <Canvas camera={{ position: [15, 15, 15], fov: 75 }}>
+      <Canvas 
+        camera={{ position: [46, 0, 46], fov: 75 }}
+        style={{ position: 'absolute' }}
+      >
         {/* @ts-ignore */}
         <color attach="background" args={['#111112']} />
         {/* @ts-ignore */}
@@ -58,7 +62,17 @@ function App() {
           maxDistance={230} 
           minDistance={5}
         />
+        <CameraController 
+          selectedLayer={null}
+          sidebarExpanded={sidebarExpanded}
+        />
       </Canvas>
+      
+      <Sidebar 
+        rule={`${rules.birth.join('')}/${rules.survival.join('')}`}
+        onRuleChange={handleRuleChange}
+        onExpandedChange={setSidebarExpanded}
+      />
     </div>
   );
 }

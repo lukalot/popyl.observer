@@ -11,7 +11,7 @@ export const RestartButton: React.FC<RestartButtonProps> = ({ onRestart }) => {
       style={{
         position: 'fixed',
         bottom: '20px',
-        left: '50%',
+        left: 'max(350px, 50%)',
         transform: 'translateX(-50%)',
         backgroundColor: 'rgba(0, 0, 0, 1)',
         border: '1px solid rgba(235, 235, 255, 0.125)',

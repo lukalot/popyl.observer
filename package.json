@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
+    "@mui/material": "^6.1.10",
     "@react-three/drei": "^9.120.0",
     "@react-three/fiber": "^8.17.10",
     "@types/three": "^0.170.0",
@@ -12,6 +13,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
+    "react-spring": "^9.7.4",
     "three": "^0.171.0"
   },
   "devDependencies": {
