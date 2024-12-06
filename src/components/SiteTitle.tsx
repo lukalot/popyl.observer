@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 export default function SiteTitle() {
   const [copied, setCopied] = useState(false);
-  const url = 'https://popyl.observer';
+  const url = 'https://polyp.observer';
 
   const handleClick = () => {
     navigator.clipboard.writeText(url);
@@ -30,7 +30,7 @@ export default function SiteTitle() {
         zIndex: 1000,
         cursor: 'pointer',
       }}>
-      {copied ? 'url copied!' : 'popyl.observer'}
+      {copied ? 'url copied!' : 'polyp.observer'}
     </div>
   );
 };
