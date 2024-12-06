@@ -22,6 +22,7 @@ export const VoxelGrid = ({ generations, onLayerSelect }: VoxelGridProps) => {
   const instanceCountRef = useRef(0);
   const frustumRef = useRef(new Frustum());
   const projScreenMatrixRef = useRef(new Matrix4());
+  const mouseDownPositionRef = useRef<{ x: number; y: number } | null>(null);
   
   useEffect(() => {
     onLayerSelect?.(0); // Notify parent of initial layer selection
@@ -91,19 +92,30 @@ export const VoxelGrid = ({ generations, onLayerSelect }: VoxelGridProps) => {
     return wireframeMesh;
   }, [selectedLayer, generations]);
 
-  // Modified click handler to track user selections
+  // Modified click handler to track user selections and ignore drags
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
     if (!event.instanceId) return;
+    
+    // Calculate movement delta
+    const movementDelta = Math.abs(event.pageX - (mouseDownPositionRef.current?.x ?? event.pageX)) +
+                         Math.abs(event.pageY - (mouseDownPositionRef.current?.y ?? event.pageY));
+    
+    // Skip if this was a drag event (movement > 2 pixels)
+    if (movementDelta > 2) return;
     
     const matrix = new Object3D();
     instancedMesh?.getMatrixAt(event.instanceId, matrix.matrix);
     matrix.matrix.decompose(matrix.position, matrix.quaternion, matrix.scale);
     
     const layer = Math.round(matrix.position.y);
-    hasUserSelectedRef.current = true; // Mark that user has made a selection
+    hasUserSelectedRef.current = true;
     setSelectedLayer(layer);
     onLayerSelect?.(layer);
+  };
+
+  const handlePointerDown = (event: ThreeEvent<PointerEvent>) => {
+    mouseDownPositionRef.current = { x: event.pageX, y: event.pageY };
   };
 
   useFrame(({ camera }) => {
@@ -161,9 +173,11 @@ export const VoxelGrid = ({ generations, onLayerSelect }: VoxelGridProps) => {
 
   return (
     <>
-      {/* @ts-ignore */}
-      <primitive object={instancedMesh} onClick={handleClick} />
-      {/* @ts-ignore */}
+      <primitive 
+        object={instancedMesh} 
+        onClick={handleClick}
+        onPointerDown={handlePointerDown}
+      />
       {wireframe && <primitive object={wireframe} />}
     </>
   );
