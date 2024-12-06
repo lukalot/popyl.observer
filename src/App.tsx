@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import { CellularAutomata3D } from './components/CellularAutomata3D.tsx';
+import { CellularAutomata3D } from './components/CellularAutomata3D';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { FPSCounter } from './components/FPSCounter.tsx';
-import { RestartButton } from './components/RestartButton.tsx';
-import SiteTitle from './components/SiteTitle.tsx';
-import { parseRuleString } from './utils/cellularAutomata.ts';
-import Sidebar from './components/Sidebar.tsx';
-import { CameraController } from './components/CameraController.tsx';
+import { FPSCounter } from './components/FPSCounter';
+import { RestartButton } from './components/RestartButton';
+import SiteTitle from './components/SiteTitle';
+import { parseRuleString } from './utils/cellularAutomata';
+import Sidebar from './components/Sidebar';
+import { CameraController } from './components/CameraController';
 
 function App() {
   const [rules, setRules] = useState({
@@ -17,10 +17,21 @@ function App() {
   
   const [key, setKey] = useState(0);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [initialMode, setInitialMode] = useState<'SOUP' | 'SINGLE'>('SOUP');
+  const [soupDensity, setSoupDensity] = useState(0.15);
 
   const handleRuleChange = (newRules: { survival: number[], birth: number[] }) => {
     setRules(newRules);
   };
+
+  const handleInitialStateChange = useCallback((mode: 'SOUP' | 'SINGLE') => {
+    setInitialMode(mode);
+    handleRestart();
+  }, []);
+
+  const handleDensityChange = useCallback((density: number) => {
+    setSoupDensity(density);
+  }, []);
 
   const handleRestart = useCallback(() => {
     setKey(prev => prev + 1);
@@ -57,6 +68,8 @@ function App() {
           maxGenerations={32}
           frameDelay={200}
           rules={rules}
+          initialMode={initialMode}
+          soupDensity={soupDensity}
         />
         <OrbitControls 
           maxDistance={230} 
@@ -72,6 +85,8 @@ function App() {
         rule={`${rules.birth.join('')}/${rules.survival.join('')}`}
         onRuleChange={handleRuleChange}
         onExpandedChange={setSidebarExpanded}
+        onInitialStateChange={handleInitialStateChange}
+        onDensityChange={handleDensityChange}
       />
     </div>
   );

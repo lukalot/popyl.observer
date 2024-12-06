@@ -9,11 +9,14 @@ import {
   Slider,
   IconButton,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 interface SidebarProps {
   rule: string;
   onRuleChange: (newRules: { survival: number[], birth: number[] }) => void;
   onExpandedChange?: (expanded: boolean) => void;
+  onInitialStateChange: (mode: 'SOUP' | 'SINGLE') => void;
+  onDensityChange: (density: number) => void;
 }
 
 const MIN_WIDTH = 280;
@@ -158,21 +161,56 @@ const RuleInputContainer = styled(Box)({
   }
 });
 
-const ControlBox = styled(Box)({
+const ToggleContainer = styled('div')({
+  display: 'flex',
+  backgroundColor: 'rgba(235, 235, 255, 0.125)',
+  borderRadius: '4px',
+  padding: '2px',
+  width: 'fit-content',
+  position: 'relative',
+});
+
+const ToggleOption = styled('div')<{ $isActive: boolean }>(({ $isActive }) => ({
+  padding: '4px 12px',
+  cursor: 'pointer',
+  position: 'relative',
+  zIndex: 1,
+  transition: 'color 0.2s ease-out',
+  fontSize: '12px',
+  fontFamily: 'monospace',
+  color: $isActive ? '#000' : '#fff',
+  userSelect: 'none',
+}));
+
+const ToggleHighlight = styled('div')<{ $position: 'left' | 'right' }>(({ $position }) => ({
+  position: 'absolute',
+  top: '2px',
+  left: $position === 'left' ? '2px' : '50%',
+  width: 'calc(50% - 4px)',
+  height: 'calc(100% - 4px)',
+  backgroundColor: '#fff',
+  borderRadius: '2px',
+  transition: 'left 0.2s ease-out',
+}));
+
+const ControlBox = styled(Box)<{ $disabled?: boolean }>(({ $disabled }) => ({
   border: '1px solid rgba(235, 235, 255, 0.125)',
   borderRadius: 4,
   padding: '8px',
+  opacity: $disabled ? 0.5 : 1,
+  pointerEvents: $disabled ? 'none' : 'auto',
   '& .MuiSlider-root': {
     paddingTop: '6px',
     marginBottom: '-3px',
   }
-});
+}));
 
-const Sidebar = ({ rule, onRuleChange, onExpandedChange }: SidebarProps) => {
+const Sidebar = ({ rule, onRuleChange, onExpandedChange, onInitialStateChange, onDensityChange }: SidebarProps) => {
   const [width, setWidth] = useState(MIN_WIDTH);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [fillRatio, setFillRatio] = useState(0.5);
+  const [mode, setMode] = useState<'SOUP' | 'SINGLE'>('SOUP');
 
   const handleDragStart = useCallback((e: React.MouseEvent) => {
     setIsDragging(true);
@@ -280,17 +318,41 @@ const Sidebar = ({ rule, onRuleChange, onExpandedChange }: SidebarProps) => {
         <Divider />
         
         <Box>
-          {/* <Typography variant="caption" display="block" gutterBottom>
-            Conditions
-          </Typography> */}
-          <ControlBox>
+          <Typography variant="caption" display="block" gutterBottom sx={{ mb: 1 }}>
+            Initial State
+          </Typography>
+          <ToggleContainer>
+            <ToggleHighlight $position={mode === 'SOUP' ? 'left' : 'right'} />
+            <ToggleOption 
+              $isActive={mode === 'SOUP'} 
+              onClick={() => {
+                setMode('SOUP');
+                onInitialStateChange('SOUP');
+              }}
+            >
+              SOUP
+            </ToggleOption>
+            <ToggleOption 
+              $isActive={mode === 'SINGLE'} 
+              onClick={() => {
+                setMode('SINGLE');
+                onInitialStateChange('SINGLE');
+              }}
+            >
+              SINGLE
+            </ToggleOption>
+          </ToggleContainer>
+          <ControlBox $disabled={mode === 'SINGLE'} sx={{ mt: 1 }}>
             <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }} gutterBottom>
               Initial Soup Density
             </Typography>
             <Slider
               size="small"
               value={fillRatio}
-              onChange={(_, value) => setFillRatio(value as number)}
+              onChange={(_, value) => {
+                setFillRatio(value as number);
+                onDensityChange(value as number);
+              }}
               min={0.05}
               max={1}
               step={0.05}

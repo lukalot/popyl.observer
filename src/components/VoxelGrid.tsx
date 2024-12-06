@@ -1,15 +1,7 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
+import * as THREE from 'three';
 import { BoxGeometry, Color, MeshPhongMaterial, InstancedMesh, Object3D, EdgesGeometry, LineSegments, LineBasicMaterial, Frustum, Matrix4 } from 'three';
 import { useFrame, ThreeEvent } from '@react-three/fiber';
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      primitive: any;
-      lineSegments: any;
-    }
-  }
-}
 
 interface VoxelGridProps {
   generations: boolean[][][];
@@ -23,6 +15,7 @@ export const VoxelGrid = ({ generations, onLayerSelect }: VoxelGridProps) => {
   const frustumRef = useRef(new Frustum());
   const projScreenMatrixRef = useRef(new Matrix4());
   const mouseDownPositionRef = useRef<{ x: number; y: number } | null>(null);
+  const meshRef = useRef<THREE.Mesh>(null);
   
   useEffect(() => {
     onLayerSelect?.(0); // Notify parent of initial layer selection
@@ -173,12 +166,31 @@ export const VoxelGrid = ({ generations, onLayerSelect }: VoxelGridProps) => {
 
   return (
     <>
-      <primitive 
-        object={instancedMesh} 
+      <mesh
+        ref={meshRef}
         onClick={handleClick}
         onPointerDown={handlePointerDown}
-      />
-      {wireframe && <primitive object={wireframe} />}
+      >
+        <bufferGeometry attach="geometry">
+          <instancedBufferAttribute 
+            attach="attributes-position" 
+            array={boxGeometry.attributes.position.array}
+            count={boxGeometry.attributes.position.count}
+            itemSize={3}
+          />
+          <instancedBufferAttribute 
+            attach="attributes-normal"
+            array={boxGeometry.attributes.normal.array}
+            count={boxGeometry.attributes.normal.count}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <meshPhongMaterial attach="material" {...material} />
+        {instancedMesh && <primitive object={instancedMesh} />}
+      </mesh>
+      {wireframe && <mesh>
+        <primitive object={wireframe} />
+      </mesh>}
     </>
   );
 }; 

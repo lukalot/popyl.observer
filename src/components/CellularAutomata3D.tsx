@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { VoxelGrid } from './VoxelGrid.tsx';
-import { generateNextGeneration } from '../utils/cellularAutomata.ts';
-import { CameraController } from './CameraController.tsx';
+import { VoxelGrid } from './VoxelGrid';
+import { generateNextGeneration } from '../utils/cellularAutomata';
+import { CameraController } from './CameraController';
 
 interface CellularAutomata3DProps {
   gridSize: number;
@@ -11,22 +11,42 @@ interface CellularAutomata3DProps {
     survival: number[];
     birth: number[];
   };
+  initialMode: 'SOUP' | 'SINGLE';
+  soupDensity: number;
 }
 
 export const CellularAutomata3D: React.FC<CellularAutomata3DProps> = ({
   gridSize,
   maxGenerations,
   frameDelay,
-  rules
+  rules,
+  initialMode,
+  soupDensity
 }) => {
+  const initializeGrid = useCallback(() => {
+    if (initialMode === 'SINGLE') {
+      // Create empty grid
+      const grid = Array(gridSize).fill(0).map(() =>
+        Array(gridSize).fill(false)
+      );
+      
+      // Set center cell to true
+      const center = Math.floor(gridSize / 2);
+      grid[center][center] = true;
+      
+      return grid;
+    } else {
+      // Initialize with random cells based on density
+      return Array(gridSize).fill(0).map(() =>
+        Array(gridSize).fill(0).map(() =>
+          Math.random() < soupDensity
+        )
+      );
+    }
+  }, [gridSize, initialMode, soupDensity]);
+
   const [generations, setGenerations] = useState<boolean[][][]>(() => {
-    // Initialize with a single layer
-    const initialGrid = Array(gridSize).fill(0).map(() =>
-      Array(gridSize).fill(0).map(() =>
-        Math.random() > 0.85
-      )
-    );
-    return [initialGrid];
+    return [initializeGrid()];
   });
   
   // Add selectedLayer state

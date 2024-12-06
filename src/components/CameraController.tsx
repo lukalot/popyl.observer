@@ -9,7 +9,7 @@ interface CameraControllerProps {
   sidebarExpanded?: boolean;
 }
 
-export const CameraController = ({ 
+export const CameraController = ({
   selectedLayer, 
   distance = 135,
   sidebarExpanded = false 

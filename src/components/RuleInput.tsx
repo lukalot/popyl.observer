@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
-import { parseRuleString } from '../utils/cellularAutomata.ts';
+import { parseRuleString } from '../utils/cellularAutomata';
 
 interface RuleInputProps {
   onRuleChange?: (rules: { survival: number[], birth: number[] }) => void;
