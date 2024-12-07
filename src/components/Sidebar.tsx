@@ -17,6 +17,10 @@ interface SidebarProps {
   onExpandedChange?: (expanded: boolean) => void;
   onInitialStateChange: (mode: 'SOUP' | 'SINGLE') => void;
   onDensityChange: (density: number) => void;
+  onGenerationsChange: (generations: number) => void;
+  onGridSizeChange: (size: number) => void;
+  generations: number;
+  gridSize: number;
 }
 
 const MIN_WIDTH = 280;
@@ -205,7 +209,17 @@ const ControlBox = styled(Box)<{ $disabled?: boolean }>(({ $disabled }) => ({
   }
 }));
 
-const Sidebar = ({ rule, onRuleChange, onExpandedChange, onInitialStateChange, onDensityChange }: SidebarProps) => {
+const Sidebar = ({ 
+  rule, 
+  onRuleChange, 
+  onExpandedChange, 
+  onInitialStateChange, 
+  onDensityChange,
+  onGenerationsChange,
+  onGridSizeChange,
+  generations,
+  gridSize
+}: SidebarProps) => {
   const [width, setWidth] = useState(MIN_WIDTH);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -385,7 +399,76 @@ const Sidebar = ({ rule, onRuleChange, onExpandedChange, onInitialStateChange, o
           <Typography variant="caption" display="block" gutterBottom>
             Simulation Area
           </Typography>
-          {/* We'll add camera controls here later */}
+          <ControlBox>
+            <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }} gutterBottom>
+              Max Generations
+            </Typography>
+            <Slider
+              size="small"
+              value={generations}
+              onChange={(_, value) => {
+                onGenerationsChange(value as number);
+              }}
+              min={4}
+              max={128}
+              step={1}
+              valueLabelDisplay="auto"
+              valueLabelFormat={(value) => `${value}`}
+              sx={{
+                color: 'white',
+                '& .MuiSlider-thumb': {
+                  backgroundColor: 'white',
+                },
+                '& .MuiSlider-track': {
+                  backgroundColor: 'white',
+                },
+                '& .MuiSlider-rail': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                },
+                '& .MuiSlider-valueLabel': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                  border: '1px solid rgba(235, 235, 255, 0.125)',
+                  fontFamily: 'monospace',
+                  color: generations > 48 ? '#ff4444' : 'white',
+                }
+              }}
+            />
+          </ControlBox>
+          
+          <ControlBox sx={{ mt: 1 }}>
+            <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)' }} gutterBottom>
+              Grid Size
+            </Typography>
+            <Slider
+              size="small"
+              value={gridSize}
+              onChange={(_, value) => {
+                onGridSizeChange(value as number);
+              }}
+              min={21}
+              max={101}
+              step={2}  // Keep it odd numbers
+              valueLabelDisplay="auto"
+              valueLabelFormat={(value) => `${value}×${value}`}
+              sx={{
+                color: 'white',
+                '& .MuiSlider-thumb': {
+                  backgroundColor: 'white',
+                },
+                '& .MuiSlider-track': {
+                  backgroundColor: 'white',
+                },
+                '& .MuiSlider-rail': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                },
+                '& .MuiSlider-valueLabel': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                  border: '1px solid rgba(235, 235, 255, 0.125)',
+                  fontFamily: 'monospace',
+                }
+              }}
+            />
+          </ControlBox>
         </Box>
       </ContentContainer>
     </SidebarContainer>

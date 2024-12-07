@@ -20,6 +20,8 @@ function App() {
   const [initialMode, setInitialMode] = useState<'SOUP' | 'SINGLE'>('SOUP');
   const [soupDensity, setSoupDensity] = useState(0.15);
   const [selectedLayer, setSelectedLayer] = useState<number | null>(null);
+  const [generations, setGenerations] = useState(32);
+  const [gridSize, setGridSize] = useState(65);
 
   const handleRuleChange = (newRules: { survival: number[], birth: number[] }) => {
     setRules(newRules);
@@ -38,6 +40,14 @@ function App() {
     setKey(prev => prev + 1);
   }, []);
 
+  const handleGenerationsChange = useCallback((newGenerations: number) => {
+    setGenerations(newGenerations);
+  }, []);
+
+  const handleGridSizeChange = useCallback((newSize: number) => {
+    setGridSize(newSize);
+  }, []);
+
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#111112' }}>
       <SiteTitle />
@@ -53,8 +63,8 @@ function App() {
         <ambientLight intensity={0.42} />
         {/* @ts-ignore */}
         <pointLight 
-          position={[10, 130, 20]} 
-          intensity={3000}
+          position={[10, 60+generations * 1.5, 19]}
+          intensity={3200}
           color="#ffdd88"
         />
         {/* @ts-ignore */}
@@ -65,8 +75,8 @@ function App() {
         />
         <CellularAutomata3D 
           key={key}
-          gridSize={65}
-          maxGenerations={32}
+          gridSize={gridSize}
+          maxGenerations={generations}
           frameDelay={200}
           rules={rules}
           initialMode={initialMode}
@@ -80,7 +90,7 @@ function App() {
         <CameraController
           selectedLayer={selectedLayer}
           sidebarExpanded={sidebarExpanded}
-          gridSize={65}
+          gridSize={gridSize}
           distance={25}
         />
       </Canvas>
@@ -91,6 +101,10 @@ function App() {
         onExpandedChange={setSidebarExpanded}
         onInitialStateChange={handleInitialStateChange}
         onDensityChange={handleDensityChange}
+        onGenerationsChange={handleGenerationsChange}
+        onGridSizeChange={handleGridSizeChange}
+        generations={generations}
+        gridSize={gridSize}
       />
     </div>
   );
