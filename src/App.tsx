@@ -19,6 +19,7 @@ function App() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [initialMode, setInitialMode] = useState<'SOUP' | 'SINGLE'>('SOUP');
   const [soupDensity, setSoupDensity] = useState(0.15);
+  const [selectedLayer, setSelectedLayer] = useState<number | null>(null);
 
   const handleRuleChange = (newRules: { survival: number[], birth: number[] }) => {
     setRules(newRules);
@@ -49,7 +50,7 @@ function App() {
         {/* @ts-ignore */}
         <color attach="background" args={['#111112']} />
         {/* @ts-ignore */}
-        <ambientLight intensity={0.4} />
+        <ambientLight intensity={0.42} />
         {/* @ts-ignore */}
         <pointLight 
           position={[10, 130, 20]} 
@@ -59,8 +60,8 @@ function App() {
         {/* @ts-ignore */}
         <pointLight 
           position={[-50, -100, -50]} 
-          intensity={1000}
-          color="#9785f2"
+          intensity={2000}
+          color="#9f8cff"
         />
         <CellularAutomata3D 
           key={key}
@@ -70,15 +71,17 @@ function App() {
           rules={rules}
           initialMode={initialMode}
           soupDensity={soupDensity}
+          onLayerSelect={setSelectedLayer}
         />
         <OrbitControls 
           maxDistance={230} 
           minDistance={5}
         />
-        <CameraController 
-          selectedLayer={null}
+        <CameraController
+          selectedLayer={selectedLayer}
           sidebarExpanded={sidebarExpanded}
           gridSize={65}
+          distance={25}
         />
       </Canvas>
       

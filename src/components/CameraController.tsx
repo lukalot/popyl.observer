@@ -21,6 +21,8 @@ export const CameraController = ({
   const targetY = useRef(camera.position.y);
   const keysPressed = useRef<Set<string>>(new Set());
   const moveSpeed = 1;
+  const currentOffsetX = useRef(0);
+  const currentOffsetY = useRef(0);
 
   // Store original viewport dimensions
   useEffect(() => {
@@ -40,7 +42,9 @@ export const CameraController = ({
   // Layer height spring for camera rotation
   useSpring({
     to: {
-      y: selectedLayer === null ? targetY.current : selectedLayer + distance,
+      y: selectedLayer === null 
+        ? targetY.current 
+        : selectedLayer + distance + ((selectedLayer - gridSize/8)),
     },
     onChange: ({ value: { y } }) => {
       const delta = y - lastY.current;
@@ -51,25 +55,48 @@ export const CameraController = ({
     config: { tension: 170, friction: 26 }
   });
 
-  // Combined spring for view offsets
+  // Helper function to apply both offsets
+  const updateViewOffset = () => {
+    if (size.width && size.height) {
+      camera.setViewOffset(
+        size.width,
+        size.height,
+        -currentOffsetX.current,
+        -currentOffsetY.current,
+        size.width,
+        size.height
+      );
+    }
+  };
+
+  // Horizontal view offset spring for sidebar
   useSpring({
     to: {
       offsetX: sidebarExpanded ? 150 : 0,
-      offsetY: selectedLayer === null ? 0 : (selectedLayer - gridSize/2) * 3.5,
     },
-    onChange: ({ value: { offsetX, offsetY } }) => {
-      if (size.width && size.height) {
-        camera.setViewOffset(
-          size.width,
-          size.height,
-          -offsetX,
-          -offsetY,
-          size.width,
-          size.height
-        );
-      }
+    from: {
+      offsetX: currentOffsetX.current,
     },
-    config: { tension: 170, friction: 26 }
+    onChange: ({ value: { offsetX } }) => {
+      currentOffsetX.current = offsetX;
+      updateViewOffset();
+    },
+    config: { tension: 180, friction: 26 }
+  });
+
+  // Vertical view offset spring for layer selection
+  useSpring({
+    to: {
+      offsetY: selectedLayer === null ? 0 : (selectedLayer - gridSize/4) * 1.2,
+    },
+    from: {
+      offsetY: currentOffsetY.current,
+    },
+    onChange: ({ value: { offsetY } }) => {
+      currentOffsetY.current = offsetY;
+      updateViewOffset();
+    },
+    config: { tension: 130, friction: 14 }
   });
 
   useEffect(() => {

@@ -13,6 +13,7 @@ interface CellularAutomata3DProps {
   };
   initialMode: 'SOUP' | 'SINGLE';
   soupDensity: number;
+  onLayerSelect: (layer: number) => void;
 }
 
 export const CellularAutomata3D: React.FC<CellularAutomata3DProps> = ({
@@ -21,7 +22,8 @@ export const CellularAutomata3D: React.FC<CellularAutomata3DProps> = ({
   frameDelay,
   rules,
   initialMode,
-  soupDensity
+  soupDensity,
+  onLayerSelect
 }) => {
   const initializeGrid = useCallback(() => {
     if (initialMode === 'SINGLE') {
@@ -48,9 +50,6 @@ export const CellularAutomata3D: React.FC<CellularAutomata3DProps> = ({
   const [generations, setGenerations] = useState<boolean[][][]>(() => {
     return [initializeGrid()];
   });
-  
-  // Add selectedLayer state
-  const [selectedLayer, setSelectedLayer] = useState<number>(0);
 
   const generateNextLayer = useCallback(() => {
     if (generations.length >= maxGenerations) return;
@@ -66,17 +65,12 @@ export const CellularAutomata3D: React.FC<CellularAutomata3DProps> = ({
     return () => clearInterval(timer);
   }, [generateNextLayer, frameDelay]);
 
-  const handleLayerSelect = (layer: number) => {
-    setSelectedLayer(layer);
-  };
-
   return (
     <>
-      <CameraController 
-        selectedLayer={selectedLayer} 
-        distance={45}
+      <VoxelGrid 
+        generations={generations} 
+        onLayerSelect={onLayerSelect}
       />
-      <VoxelGrid generations={generations} onLayerSelect={handleLayerSelect} />
     </>
   );
 }; 
