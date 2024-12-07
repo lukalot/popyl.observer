@@ -7,12 +7,14 @@ interface CameraControllerProps {
   selectedLayer: number | null;
   distance?: number;
   sidebarExpanded?: boolean;
+  gridSize?: number;
 }
 
 export const CameraController = ({
   selectedLayer, 
   distance = 135,
-  sidebarExpanded = false 
+  sidebarExpanded = false,
+  gridSize = 25
 }: CameraControllerProps) => {
   const { camera, size } = useThree();
   const lastY = useRef(camera.position.y);
@@ -35,7 +37,7 @@ export const CameraController = ({
     }
   }, [camera, size]);
 
-  // Layer height spring
+  // Layer height spring for camera rotation
   useSpring({
     to: {
       y: selectedLayer === null ? targetY.current : selectedLayer + distance,
@@ -49,18 +51,19 @@ export const CameraController = ({
     config: { tension: 170, friction: 26 }
   });
 
-  // Sidebar offset spring
+  // Combined spring for view offsets
   useSpring({
     to: {
       offsetX: sidebarExpanded ? 150 : 0,
+      offsetY: selectedLayer === null ? 0 : (selectedLayer - gridSize/2) * 3.5,
     },
-    onChange: ({ value: { offsetX } }) => {
+    onChange: ({ value: { offsetX, offsetY } }) => {
       if (size.width && size.height) {
         camera.setViewOffset(
           size.width,
           size.height,
           -offsetX,
-          0,
+          -offsetY,
           size.width,
           size.height
         );

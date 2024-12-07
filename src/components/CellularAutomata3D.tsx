@@ -72,7 +72,10 @@ export const CellularAutomata3D: React.FC<CellularAutomata3DProps> = ({
 
   return (
     <>
-      <CameraController selectedLayer={selectedLayer} distance={45} />
+      <CameraController 
+        selectedLayer={selectedLayer} 
+        distance={45}
+      />
       <VoxelGrid generations={generations} onLayerSelect={handleLayerSelect} />
     </>
   );

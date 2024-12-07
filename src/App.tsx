@@ -78,6 +78,7 @@ function App() {
         <CameraController 
           selectedLayer={null}
           sidebarExpanded={sidebarExpanded}
+          gridSize={65}
         />
       </Canvas>
       
